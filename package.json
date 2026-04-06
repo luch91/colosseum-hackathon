@@ -8,11 +8,14 @@
     "build:app": "cd app && npm run build",
     "initialize": "ts-node -P tsconfig.json scripts/initialize.ts",
     "register-service": "ts-node -P tsconfig.json scripts/register-service.ts",
+    "register-demo-services": "ts-node -P tsconfig.json scripts/register-demo-services.ts",
     "demo:server": "ts-node -P tsconfig.json demo/service-server.ts",
-    "demo:client": "ts-node -P tsconfig.json demo/agent-client.ts"
+    "demo:client": "ts-node -P tsconfig.json demo/agent-client.ts",
+    "demo:claude": "ts-node -P tsconfig.json demo/claude-agent.ts"
   },
   "dependencies": {
     "@anchor-lang/core": "^1.0.0",
+    "@anthropic-ai/sdk": "^0.82.0",
     "@solana/web3.js": "^1.98.0",
     "express": "^4.19.2"
   },
