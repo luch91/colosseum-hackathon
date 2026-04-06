@@ -5,18 +5,27 @@
   "scripts": {
     "test": "ts-mocha -p ./tsconfig.json -t 1000000 tests/**/*.ts",
     "build:sdk": "cd sdk && npm run build",
-    "build:app": "cd app && npm run build"
+    "build:app": "cd app && npm run build",
+    "initialize": "ts-node -P tsconfig.json scripts/initialize.ts",
+    "register-service": "ts-node -P tsconfig.json scripts/register-service.ts",
+    "demo:server": "ts-node -P tsconfig.json demo/service-server.ts",
+    "demo:client": "ts-node -P tsconfig.json demo/agent-client.ts"
   },
   "dependencies": {
     "@anchor-lang/core": "^1.0.0",
-    "@solana/web3.js": "^1.98.0"
+    "@solana/web3.js": "^1.98.0",
+    "express": "^4.19.2"
   },
   "devDependencies": {
     "@types/chai": "^4.3.11",
+    "@types/express": "^4.17.21",
     "@types/mocha": "^10.0.6",
+    "@types/node": "^20.12.7",
     "chai": "^4.4.1",
     "mocha": "^10.3.0",
     "ts-mocha": "^10.0.0",
+    "ts-node": "^10.9.2",
+    "tsconfig-paths": "^4.2.0",
     "typescript": "^5.4.2"
   }
 }

@@ -1,6 +1,6 @@
 {
   "compilerOptions": {
-    "types": ["mocha", "chai"],
+    "types": ["mocha", "chai", "node"],
     "typeRoots": ["./node_modules/@types"],
     "lib": ["es2022"],
     "module": "commonjs",
@@ -8,7 +8,11 @@
     "esModuleInterop": true,
     "resolveJsonModule": true,
     "strict": true,
-    "skipLibCheck": true
+    "skipLibCheck": true,
+    "baseUrl": ".",
+    "paths": {
+      "@agentpay/sdk": ["./sdk/src/index.ts"]
+    }
   },
-  "include": ["tests/**/*.ts"]
+  "include": ["tests/**/*.ts", "scripts/**/*.ts", "demo/**/*.ts"]
 }
