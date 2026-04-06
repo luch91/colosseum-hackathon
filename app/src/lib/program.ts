@@ -1,6 +1,5 @@
 import { Connection, PublicKey } from "@solana/web3.js";
-import * as anchor from "@coral-xyz/anchor";
-import { PROGRAM_ID, MARKETPLACE_PDA, SERVICE_SEED, RPC_URL } from "./constants";
+import { PROGRAM_ID, SERVICE_SEED, RPC_URL } from "./constants";
 
 export function getConnection(): Connection {
   return new Connection(RPC_URL, "confirmed");
@@ -39,9 +38,9 @@ export interface ServiceState {
 export async function fetchAllServices(
   connection: Connection
 ): Promise<ServiceState[]> {
-  // Service discriminator: first 8 bytes of SHA-256("account:Service")
+  // Service discriminator: sha256("account:Service")[0..8]
   const SERVICE_DISCRIMINATOR = Buffer.from([
-    0xdb, 0x8e, 0x82, 0x2f, 0xa0, 0xf3, 0x44, 0x6e,
+    0x90, 0x3e, 0x4c, 0x81, 0xa7, 0x24, 0x97, 0xfa,
   ]);
 
   const accounts = await connection.getProgramAccounts(PROGRAM_ID, {

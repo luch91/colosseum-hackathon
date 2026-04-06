@@ -100,10 +100,9 @@ export class X402Client {
     );
 
     // Build pay_for_service transaction using direct instruction data.
-    // In production, use the generated IDL via @anchor-lang/core.
-    // Instruction discriminator for pay_for_service (first 8 bytes of sha256("global:pay_for_service"))
+    // Discriminator = sha256("global:pay_for_service")[0..8]
     const discriminator = Buffer.from([
-      0x7a, 0x5e, 0xc4, 0x3d, 0xb1, 0x22, 0x9f, 0x6c,
+      0xb1, 0x26, 0x5d, 0x59, 0x10, 0x09, 0xce, 0x11,
     ]);
 
     const data = Buffer.concat([discriminator, requestHashBytes]);

@@ -84,10 +84,11 @@ export function x402ExpressMiddleware(config: ProviderConfig) {
     const proofHeader = req.headers["x-payment-proof"];
 
     if (!proofHeader) {
+      const requirements = buildPaymentRequirements(config);
+      res.set("X-Payment-Required", JSON.stringify(requirements));
       return res.status(402).json({
         error: "Payment required",
-        message: "This endpoint requires an x402 payment on Solana",
-        "X-Payment-Required": buildPaymentRequirements(config),
+        requirements,
       });
     }
 

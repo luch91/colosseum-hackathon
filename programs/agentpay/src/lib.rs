@@ -93,10 +93,11 @@ pub mod agentpay {
         ctx: Context<PayForService>,
         request_hash: [u8; 32],
     ) -> Result<()> {
-        let service = &ctx.accounts.service;
-        require!(service.active, AgentPayError::ServiceInactive);
+        // Read all values from service upfront — avoids borrow conflicts when mutating later
+        require!(ctx.accounts.service.active, AgentPayError::ServiceInactive);
+        let price = ctx.accounts.service.price_lamports;
+        let service_key = ctx.accounts.service.key();
 
-        let price = service.price_lamports;
         let fee_bps = ctx.accounts.marketplace.fee_bps as u64;
         let fee = price
             .checked_mul(fee_bps)
@@ -108,7 +109,7 @@ pub mod agentpay {
         // Transfer provider share
         system_program::transfer(
             CpiContext::new(
-                ctx.accounts.system_program.to_account_info(),
+                *ctx.accounts.system_program.key,
                 system_program::Transfer {
                     from: ctx.accounts.payer.to_account_info(),
                     to: ctx.accounts.provider.to_account_info(),
@@ -121,7 +122,7 @@ pub mod agentpay {
         if fee > 0 {
             system_program::transfer(
                 CpiContext::new(
-                    ctx.accounts.system_program.to_account_info(),
+                    *ctx.accounts.system_program.key,
                     system_program::Transfer {
                         from: ctx.accounts.payer.to_account_info(),
                         to: ctx.accounts.admin.to_account_info(),
@@ -133,7 +134,7 @@ pub mod agentpay {
 
         // Record payment — PDA prevents replay attacks
         let record = &mut ctx.accounts.payment_record;
-        record.service = service.key();
+        record.service = service_key;
         record.payer = ctx.accounts.payer.key();
         record.amount = price;
         record.timestamp = Clock::get()?.unix_timestamp;
@@ -157,7 +158,7 @@ pub mod agentpay {
             .ok_or(AgentPayError::Overflow)?;
 
         emit!(PaymentMade {
-            service: service.key(),
+            service: service_key,
             payer: ctx.accounts.payer.key(),
             amount: price,
             request_hash,
@@ -313,10 +314,10 @@ pub struct PayForService<'info> {
     pub marketplace: Account<'info, Marketplace>,
     /// CHECK: Receives payment — verified via service.provider constraint above
     #[account(mut, address = service.provider)]
-    pub provider: AccountInfo<'info>,
+    pub provider: UncheckedAccount<'info>,
     /// CHECK: Receives fee — verified via marketplace.admin
     #[account(mut, address = marketplace.admin)]
-    pub admin: AccountInfo<'info>,
+    pub admin: UncheckedAccount<'info>,
     #[account(mut)]
     pub payer: Signer<'info>,
     pub system_program: Program<'info, System>,
